@@ -1,0 +1,80 @@
+Mitran Andrei-Gabriel, 313CA
+
+The problem is based on dynamic memory allocation.
+
+Utilizing a resizable vector, we can continously add matrixes to it by 
+reallocating memory.
+
+We can also store the dimensions of each matrix in two arrays (it is also 
+possible to do it in one, but in order to simplify the memory allocation and
+reallocation, I opted for two).
+
+'L' command:
+We read the dimensions, allocate enough memory and scan the matrix.
+
+'P' and 'D' commands:
+After adding the newly read matrix to the vector, as well as its dimensions
+to their respective arrays, we can easily print any of them by accessing the
+vector or the arrays.
+
+'C' command:
+In order to resize a matrix, we allocate memory for a temporary double
+pointer, that will help store the resized matrix. We the scan the new number
+of rows, followed by the rows that contain elements that belong in the new
+matrix. We do the same for the columns. Each element that is added
+is found at the intersection between each of the aforementioned rows and each
+of the aforementioned columns. We can easily store the values of the rows and
+columns in arrays, which we can free afterwards. We then free the old matrix 
+from the vector and replace it with the new one.
+
+'M' and 'S' commands:
+Multiplication is done using the usual algorithm or using the Strassen one.
+Either way, we allocate memory to a temporary double pointer, then add it to
+the vector.
+The usual algorithm works by multiplying each row of the first matrix with
+each column of the second matrix.
+The Strassen algorithm works by partitioning each of the matrixes into four
+equal blocks, and reconstructing the result based on certain multiplications
+done between linear combinations of the blocks. If we let A * B = C, and
+we call the partitions of a matrix D, D11, D12, D21 and D22 (upper left,
+upper right, lower left and lower right), then the following formulas are
+utilised:
+Firstly:
+M1 = (A11 + A21) * (B11 + B21)
+M2 = (A21 + A22) * B11
+M3 = A11 * (B12 - B22)
+M4 = A22 * (B21 - B11)
+M5 = (A11 + A12) * B22
+M6 = (A21 - A11) * (B11 + B12)
+M7 = (A12 - A22) * (B21 + B22)
+Secondly:
+C11 = M1 + M4 - M5 + M7
+C12 = M3 + M5
+C21 = M2 + M4
+C22 = M1 + M3 - M2 + M6
+Every time a muliplication is needed, the function makes a recursive call
+to itself, until after partitioning we end up with a 1 x 1 matrix, and
+c = a * b, as they are all simply numbers.
+For simplicity's sake, the matrixes are square and their dimension is a
+power of 2.
+The algorithm works fine without this, by adding 0 in order
+for the dimensions to reach the closest power of 2, then removing them.
+
+'O' command:
+In order to sort the vector, we calculate the sum of the elements of each
+matrix and store it in another array. Then, using a standard sorting
+algorithm in the vector, we swap two matrixes accordingly, as well as their
+dimensions and sum. We then free the array that stores the sums.
+
+'T' command:
+In order to transpose a matrix, we allocate memory to a temporary double
+pointer, and simply add each element of the original matrix along every column
+to its rows. Finally, we add it to the vector.
+
+'F' command:
+When freeing a matrix, we move it to the end of the vector, free it and 
+reallocate less memory to the vector.
+
+'Q' command:
+When freeing all the resources, we free each matrix in the vector, the vector
+itself, as well as the arrays that store the dimensions.
